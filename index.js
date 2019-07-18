@@ -5,6 +5,7 @@ const validateGenre = require('./utils/validators/genre');
 const app = express();
 
 app.use(express.json());
+app.use(express.static('./static'));
 
 let genres = [
   { id: 1, name: 'Horror' },
