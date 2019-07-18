@@ -2,6 +2,8 @@ require('colors');
 const path = require('path');
 const express = require('express');
 const config = require('config');
+const justDebugger = require('debug')('app:just');
+const dbDebugger = require('debug')('app:db');
 const validateGenre = require('./utils/validators/genre');
 
 const app = express();
@@ -9,12 +11,16 @@ const app = express();
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, 'public')));
 
-console.log(config.get('name'));
-console.log(config.get('password'));
-console.log(config.get('email.name'));
+// console.log(config.get('name'));
+// console.log(config.get('password'));
+// console.log(config.get('email.name'));
 
 // console.log(app.get('env'));
 // console.log(process.env.NODE_ENV);
+
+justDebugger('Hello!');
+dbDebugger('Db is connected');
+justDebugger('Hello 2!');
 
 let genres = [
   { id: 1, name: 'Horror' },
