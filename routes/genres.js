@@ -1,50 +1,49 @@
 const router = require('express').Router();
 const validateGenre = require('../utils/validators/genre');
+const GenreModel = require('../models/genres');
 
-let genres = [
-  { id: 1, name: 'Horror' },
-  { id: 2, name: 'Comedy' },
-  { id: 3, name: 'Drama' }
-];
-
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  const genres = await GenreModel.getGenres();
   res.send(genres);
 });
 
-router.post('/', (req, res) => {
-  const errorMessage = validateGenre(req.body);
-  if (errorMessage) return res.status(400).send(errorMessage);
+router.get('/:id', async (req, res) => {
+  const genre = await GenreModel.getGenreById(req.params.id);
 
-  const newGenre = { id: genres.length + 1, ...req.body };
-  genres.push(newGenre);
-  res.send(newGenre);
+  if (!genre)
+    return res.status(404).send(`There's no genre with id of ${req.params.id}`);
+
+  res.send(genre);
 });
 
-router.put('/:id', (req, res) => {
+router.post('/', async (req, res) => {
   const errorMessage = validateGenre(req.body);
   if (errorMessage) return res.status(400).send(errorMessage);
 
-  const genreId = parseInt(req.params.id);
-  const genreToUpdate = genres.find(genre => genre.id === genreId);
-  if (!genreToUpdate)
+  const savedGenre = await GenreModel.saveGenre(req.body);
+
+  res.send(savedGenre);
+});
+
+router.put('/:id', async (req, res) => {
+  const errorMessage = validateGenre(req.body);
+  if (errorMessage) return res.status(400).send(errorMessage);
+
+  const updatedGenre = await GenreModel.updateGenre(req.params.id, req.body);
+  if (!updatedGenre)
     return res.status(404).send(`There's no genre with id of ${genreId}`);
 
-  genres = genres.map(genre =>
-    genre.id === genreId ? { ...genre, ...req.body } : genre
-  );
-  const updatedGenre = genres.find(genre => genre.id === genreId);
   res.send(updatedGenre);
 });
 
-router.delete('/:id', (req, res) => {
-  const genreId = parseInt(req.params.id);
+router.delete('/:id', async (req, res) => {
+  const deletedGenre = await GenreModel.deleteGenre(req.params.id);
 
-  const genreToDelete = genres.find(genre => genre.id === genreId);
-  if (!genreToDelete)
-    return res.status(404).send(`There's no genre with id of ${genreId}`);
+  if (!deletedGenre) {
+    return res.status(404).send(`There's no genre with id of ${req.params.id}`);
+  }
 
-  genres = genres.filter(genre => genre.id !== genreId);
-  res.send(genreToDelete);
+  res.send(deletedGenre);
 });
 
 module.exports = router;
