@@ -41,6 +41,7 @@ const updateCustomer = async (id, customer) => {
 };
 
 module.exports = {
+  Customer,
   getCustomers,
   getCustomerById,
   saveCustomer,

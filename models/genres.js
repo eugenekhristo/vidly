@@ -46,6 +46,7 @@ const deleteGenre = async id => {
 };
 
 module.exports = {
+  Genre,
   genreSchema,
   saveGenre,
   getGenres,
