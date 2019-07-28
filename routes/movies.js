@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { Movie, validateGenre } = require('../models/movie');
 const { Genre } = require('../models/genres');
+const authMiddleware = require('../middleware/auth');
 
 router.get('/', async (req, res) => {
   const movies = await Movie.find();
@@ -13,7 +14,7 @@ router.get('/:id', async (req, res) => {
   res.send(movie);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   const errorMessage = validateGenre(req.body);
   if (errorMessage) return res.status(400).send(errorMessage);
 
@@ -29,7 +30,7 @@ router.post('/', async (req, res) => {
   res.send(movie);
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
   const errorMessage = validateGenre(req.body);
   if (errorMessage) return res.send(errorMessage);
 
@@ -68,7 +69,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   const deletedMovie = await Movie.findByIdAndDelete(req.params.id);
 
   if (!deletedMovie)

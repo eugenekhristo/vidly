@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const validateGenre = require('../utils/validators/genre');
 const GenreModel = require('../models/genres');
+const authMiddleware = require('../middleware/auth');
 
 router.get('/', async (req, res) => {
   const genres = await GenreModel.getGenres();
@@ -16,7 +17,7 @@ router.get('/:id', async (req, res) => {
   res.send(genre);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   const errorMessage = validateGenre(req.body);
   if (errorMessage) return res.status(400).send(errorMessage);
 
@@ -25,7 +26,7 @@ router.post('/', async (req, res) => {
   res.send(savedGenre);
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', authMiddleware, async (req, res) => {
   const errorMessage = validateGenre(req.body);
   if (errorMessage) return res.status(400).send(errorMessage);
 
@@ -36,7 +37,7 @@ router.put('/:id', async (req, res) => {
   res.send(updatedGenre);
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authMiddleware, async (req, res) => {
   const deletedGenre = await GenreModel.deleteGenre(req.params.id);
 
   if (!deletedGenre) {

@@ -12,7 +12,7 @@ const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 
 if(!config.get('secretKeyJwt')) {
-  console.error(`Environment variable '${config.get('secretKeyJwt')}' is not set!`);
+  console.error(`Environment variable for 'secretKeyJwt' is not set!`);
   process.exit(1);
 }
 
