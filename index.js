@@ -7,21 +7,14 @@ require('winston-mongodb');
 const config = require('config');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
-const genresRouter = require('./routes/genres');
-const customersRouter = require('./routes/customers');
-const moviesRouter = require('./routes/movies');
-const rentalsRouter = require('./routes/rentals');
-const usersRouter = require('./routes/users');
-const authRouter = require('./routes/auth');
 
-// process.on('uncaughtException', error => {
-//   console.error('Uncaught Exception!');
-//   winston.error('', error);
-// });
+const app = express();
+require('./startup/routes')(app);
 
 winston.exceptions.handle(
   new winston.transports.File({
-    filename: 'exceptions.log'
+    filename: 'exceptions.log',
+    exitOnError: true
   })
 );
 
@@ -30,30 +23,17 @@ process.on('unhandledRejection', error => {
 });
 
 winston.add(new winston.transports.File({ filename: 'loginfo.log' }));
-// winston.add(
-//   new winston.transports.MongoDB({
-//     db: 'mongodb://localhost/vidly',
-//     level: 'error'
-//   })
-// );
-
-// throw new Error('Something failed during startup!');
+winston.add(
+  new winston.transports.MongoDB({
+    db: 'mongodb://localhost/vidly',
+    level: 'error'
+  })
+);
 
 if (!config.get('secretKeyJwt')) {
   console.error(`Environment variable for 'secretKeyJwt' is not set!`);
   process.exit(1);
 }
-
-const app = express();
-
-app.use(express.json());
-app.use('/api/genres', genresRouter);
-app.use('/api/customers', customersRouter);
-app.use('/api/movies', moviesRouter);
-app.use('/api/rentals', rentalsRouter);
-app.use('/api/users', usersRouter);
-app.use('/api/auth', authRouter);
-app.use(require('./middleware/error'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
