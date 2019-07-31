@@ -3,29 +3,20 @@ const validateGenre = require('../utils/validators/genre');
 const GenreModel = require('../models/genres');
 const authMiddleware = require('../middleware/auth');
 const adminMiddleware = require('../middleware/admin');
-const asyncMiddleware = require('../middleware/async');
 
-router.get(
-  '/',
-  asyncMiddleware(async (req, res) => {
-    const genres = await GenreModel.getGenres();
-    res.send(genres);
-  })
-);
+router.get('/', async (req, res) => {
+  const genres = await GenreModel.getGenres();
+  res.send(genres);
+});
 
-router.get(
-  '/:id',
-  asyncMiddleware(async (req, res) => {
-    const genre = await GenreModel.getGenreById(req.params.id);
+router.get('/:id', async (req, res) => {
+  const genre = await GenreModel.getGenreById(req.params.id);
 
-    if (!genre)
-      return res
-        .status(404)
-        .send(`There's no genre with id of ${req.params.id}`);
+  if (!genre)
+    return res.status(404).send(`There's no genre with id of ${req.params.id}`);
 
-    res.send(genre);
-  })
-);
+  res.send(genre);
+});
 
 router.post('/', authMiddleware, async (req, res) => {
   const errorMessage = validateGenre(req.body);
