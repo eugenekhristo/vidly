@@ -14,20 +14,30 @@ const rentalsRouter = require('./routes/rentals');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 
-process.on('uncaughtException', error => {
-  console.error('Uncaught Exception!');
-  winston.error('', error);
-});
+// process.on('uncaughtException', error => {
+//   console.error('Uncaught Exception!');
+//   winston.error('', error);
+// });
 
-winston.add(new winston.transports.File({ filename: 'loginfo.log' }));
-winston.add(
-  new winston.transports.MongoDB({
-    db: 'mongodb://localhost/vidly',
-    level: 'error'
+winston.exceptions.handle(
+  new winston.transports.File({
+    filename: 'exceptions.log'
   })
 );
 
-throw new Error('Something failed during startup!');
+process.on('unhandledRejection', error => {
+  throw error;
+});
+
+winston.add(new winston.transports.File({ filename: 'loginfo.log' }));
+// winston.add(
+//   new winston.transports.MongoDB({
+//     db: 'mongodb://localhost/vidly',
+//     level: 'error'
+//   })
+// );
+
+// throw new Error('Something failed during startup!');
 
 if (!config.get('secretKeyJwt')) {
   console.error(`Environment variable for 'secretKeyJwt' is not set!`);
@@ -55,10 +65,4 @@ mongoose
     useNewUrlParser: true,
     useCreateIndex: true
   })
-  .then(() => console.log(`Connected to MongoDB server...`.yellow))
-  .catch(err =>
-    console.log(
-      `Error happened while connecting to MongoDB server:`.red,
-      err.message
-    )
-  );
+  .then(() => console.log(`Connected to MongoDB server...`.yellow));
