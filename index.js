@@ -3,6 +3,7 @@ require('express-async-errors');
 const express = require('express');
 const mongoose = require('mongoose');
 const winston = require('winston');
+require('winston-mongodb');
 const config = require('config');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
@@ -14,6 +15,12 @@ const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 
 winston.add(new winston.transports.File({ filename: 'loginfo.log' }));
+winston.add(
+  new winston.transports.MongoDB({
+    db: 'mongodb://localhost/vidly',
+    level: 'error'
+  })
+);
 
 if (!config.get('secretKeyJwt')) {
   console.error(`Environment variable for 'secretKeyJwt' is not set!`);

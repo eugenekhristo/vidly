@@ -22,7 +22,8 @@
     "lodash": "^4.17.15",
     "mongoose": "^5.6.5",
     "pug": "^2.0.4",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "winston-mongodb": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.19.1",
