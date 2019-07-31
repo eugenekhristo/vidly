@@ -5,6 +5,7 @@ const authMiddleware = require('../middleware/auth');
 const adminMiddleware = require('../middleware/admin');
 
 router.get('/', async (req, res) => {
+  throw new Error('Could not connect to MongoDB');
   const genres = await GenreModel.getGenres();
   res.send(genres);
 });

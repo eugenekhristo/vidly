@@ -1,4 +1,6 @@
+const winston = require('winston');
+
 module.exports = (error, req, res, next) => {
-  // loggin'
+  winston.error(error.message, error);
   res.status(500).send(`Something failed: ${error.message}`);
 };

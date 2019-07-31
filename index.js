@@ -2,6 +2,7 @@ require('colors');
 require('express-async-errors');
 const express = require('express');
 const mongoose = require('mongoose');
+const winston = require('winston');
 const config = require('config');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
@@ -11,6 +12,8 @@ const moviesRouter = require('./routes/movies');
 const rentalsRouter = require('./routes/rentals');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
+
+winston.add(new winston.transports.File({ filename: 'loginfo.log' }));
 
 if (!config.get('secretKeyJwt')) {
   console.error(`Environment variable for 'secretKeyJwt' is not set!`);
