@@ -14,6 +14,11 @@ const rentalsRouter = require('./routes/rentals');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 
+process.on('uncaughtException', error => {
+  console.error('Uncaught Exception!');
+  winston.error('', error);
+});
+
 winston.add(new winston.transports.File({ filename: 'loginfo.log' }));
 winston.add(
   new winston.transports.MongoDB({
@@ -21,6 +26,8 @@ winston.add(
     level: 'error'
   })
 );
+
+throw new Error('Something failed during startup!');
 
 if (!config.get('secretKeyJwt')) {
   console.error(`Environment variable for 'secretKeyJwt' is not set!`);
