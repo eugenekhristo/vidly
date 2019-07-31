@@ -5,8 +5,13 @@ const authMiddleware = require('../middleware/auth');
 const adminMiddleware = require('../middleware/admin');
 
 router.get('/', async (req, res) => {
-  const genres = await GenreModel.getGenres();
-  res.send(genres);
+  try {
+    const genres = await GenreModel.getGenres();
+    res.send(genres);
+  } catch (error) {
+    // logging
+    res.status(500).send(`Something failed: ${error.message}`);
+  }
 });
 
 router.get('/:id', async (req, res) => {

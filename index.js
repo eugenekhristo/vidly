@@ -11,7 +11,7 @@ const rentalsRouter = require('./routes/rentals');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
 
-if(!config.get('secretKeyJwt')) {
+if (!config.get('secretKeyJwt')) {
   console.error(`Environment variable for 'secretKeyJwt' is not set!`);
   process.exit(1);
 }
@@ -25,6 +25,7 @@ app.use('/api/movies', moviesRouter);
 app.use('/api/rentals', rentalsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
+app.use(require('./middleware/error'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
@@ -32,8 +33,14 @@ app.listen(PORT, () =>
 );
 
 mongoose
-  .connect(config.get('db.url'), { useNewUrlParser: true })
+  .connect(config.get('db.url'), {
+    useNewUrlParser: true,
+    useCreateIndex: true
+  })
   .then(() => console.log(`Connected to MongoDB server...`.yellow))
   .catch(err =>
-    console.log(`Error happened while connecting to MongoDB server:`.red, err)
+    console.log(
+      `Error happened while connecting to MongoDB server:`.red,
+      err.message
+    )
   );
